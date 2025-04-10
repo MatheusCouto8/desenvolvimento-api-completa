@@ -1,69 +1,144 @@
-import tarefaModel from "../models/tarefaModel.js";
+import eventoModel from "../models/eventoModel.js";
 
-class TarefaController {
-  getAll = async (req, res) => {
+class EventoController {
+  // GET /api/animes
+  async getAllEventos(req, res) {
     try {
-      const tarefas = await tarefaModel.getAll();
-      res.json(tarefas);
+      const eventos = await EventoModel.findAll();
+      res.json(eventos);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ erro: "Erro ao buscar tarefas" });
+      console.error("Erro ao buscar eventos:", error);
+      res.status(500).json({ error: "Erro ao buscar eventos" });
     }
-  };
+  }
 
-  create = async (req, res) => {
-    const { descricao } = req.body;
-    // const descricao = req.body.descricao;
+  // GET /api/animes/:id
+  async getEventoById(req, res) {
     try {
-      if (!descricao) {
-        return res.status(400).json({ erro: "Descrição é obrigatória" });
+      const { id } = req.params;
+
+      const evento = await EventoModel.findById(id);
+
+      if (!evento) {
+        return res.status(404).json({ error: "Evento não encontrado" });
       }
 
-      const novaTarefa = await tarefaModel.create(descricao);
-      res.status(201).json(novaTarefa);
+      res.json(evento);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ erro: "Erro ao criar tarefa" });
+      console.error("Erro ao buscar evento:", error);
+      res.status(500).json({ error: "Erro ao buscar evento" });
     }
-  };
+  }
 
-  update = async (req, res) => {
-    const { id } = req.params;
-    const { concluida, descricao } = req.body;
-
+  // POST /api/animes
+  async createEvento(req, res) {
     try {
-      const tarefaAtualizada = await tarefaModel.update(
-        Number(id),
-        concluida,
-        descricao
+      // Validação básica
+      const {
+        title,
+        description,
+        date,
+        location,
+        capacity,
+        category,
+        price,
+      } = req.body;
+
+      // Verifica se o título do anime foi fornecido
+
+      if (
+        !title ||
+        !description ||
+        !date ||
+        !location ||
+        !category ||
+        !capacity ||
+        !price
+      ) {
+        return res
+          .status(400)
+          .json({ error: "Todos os campos são obrigatórios" });
+      }
+
+      // Criar o novo anime
+      const newEvento = await EventoModel.create(
+        title,
+        description,
+        date,
+        location,
+        capacity,
+        category,
+        price
       );
 
-      if (!tarefaAtualizada) {
-        return res.status(404).json({ erro: "Tarefa não encontrada!" });
+      if (!newEvento) {
+        return res.status(400).json({ error: "Erro ao criar evento" });
       }
 
-      res.json(tarefaAtualizada);
+      res.status(201).json(newEvento);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ erro: "Erro ao atualizar tarefa!" });
+      console.error("Erro ao criar evento:", error);
+      res.status(500).json({ error: "Erro ao criar evento" });
     }
-  };
+  }
 
-  delete = async (req, res) => {
-    const { id } = req.params;
-
+  // PUT /api/animes/:id
+  async updateAnime(req, res) {
     try {
-      const sucesso = await tarefaModel.delete(Number(id));
+      const { id } = req.params;
+      const {
+        title,
+        description,
+        episodes,
+        releaseYear,
+        studio,
+        genres,
+        rating,
+        imageUrl,
+      } = req.body;
 
-      if (!sucesso) {
-        return res.status(404).json({ erro: "Tarefa não encontrada" });
+      // Atualizar o anime
+      const updatedAnime = await AnimeModel.update(
+        id,
+        title,
+        description,
+        episodes,
+        releaseYear,
+        studio,
+        genres,
+        rating,
+        imageUrl
+      );
+
+      if (!updatedAnime) {
+        return res.status(404).json({ error: "Anime não encontrado" });
       }
 
-      res.status(200).send({ message: "Tarefa deletada com sucesso!" });
+      res.json(updatedAnime);
     } catch (error) {
-      console.error(error);
-      res.status(500).json({ error: "Erro ao excluir tarefa!" });
+      console.error("Erro ao atualizar anime:", error);
+      res.status(500).json({ error: "Erro ao atualizar anime" });
     }
-  };
+  }
+
+  // DELETE /api/animes/:id
+  async deleteAnime(req, res) {
+    try {
+      const { id } = req.params;
+
+      // Remover o anime
+      const result = await AnimeModel.delete(id);
+
+      if (!result) {
+        return res.status(404).json({ error: "Anime não encontrado" });
+      }
+
+      res.status(204).end(); // Resposta sem conteúdo
+    } catch (error) {
+      console.error("Erro ao remover anime:", error);
+      res.status(500).json({ error: "Erro ao remover anime" });
+    }
+  }
 }
-export default new TarefaController();
+
+export default new AnimeController();
