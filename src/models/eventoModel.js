@@ -1,7 +1,7 @@
 import prisma from "../../prisma/client.js";
 
 class EventoModel {
-  // Obter todos os animes
+  // Obter todos os eventos
   async findAll() {
     const eventos = await prisma.evento.findMany({
       orderBy: {
@@ -14,7 +14,7 @@ class EventoModel {
     return eventos;
   }
 
-  // Obter um anime pelo ID
+  // Obter um evento pelo ID
   async findById(id) {
     const evento = await prisma.evento.findUnique({
       where: {
@@ -25,15 +25,15 @@ class EventoModel {
     return evento;
   }
 
-  // Criar um novo anime
+  // Criar um novo evento
   async create(
     title,
-        description,
-        date,
-        location,
-        capacity,
-        category,
-        price
+    description,
+    date,
+    location,
+    capacity,
+    category,
+    price
   ) {
     const newEvento = await prisma.evento.create({
       data: {
@@ -43,23 +43,23 @@ class EventoModel {
         location,
         capacity,
         category,
-        price
+        price,
       },
     });
 
     return newEvento;
   }
 
-  // Atualizar um anime
+  // Atualizar um evento
   async update(
     id,
     title,
-        description,
-        date,
-        location,
-        capacity,
-        category,
-        price
+    description,
+    date,
+    location,
+    capacity,
+    category,
+    price
   ) {
     const evento = await this.findById(id);
 
@@ -76,21 +76,20 @@ class EventoModel {
       data.description = description;
     }
     if (date !== undefined) {
-      data.date = episodes;
+      data.date = date;
     }
     if (location !== undefined) {
-      data.location = releaseYear;
+      data.location = location;
     }
     if (capacity !== undefined) {
-      data.capacity = studio;
+      data.capacity = capacity;
     }
     if (category !== undefined) {
-      data.category = genres;
+      data.category = category;
     }
     if (price !== undefined) {
-      data.price = rating;
+      data.price = price;
     }
-    
 
     const eventoUpdated = await prisma.evento.update({
       where: {
@@ -102,7 +101,7 @@ class EventoModel {
     return eventoUpdated;
   }
 
-  // Remover um anime
+  // Remover um evento
   async delete(id) {
     const evento = await this.findById(id);
 
