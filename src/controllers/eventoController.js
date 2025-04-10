@@ -1,10 +1,10 @@
 import eventoModel from "../models/eventoModel.js";
 
 class EventoController {
-  // GET /api/animes
-  async getAllEventos(req, res) {
+  // GET /eventos
+  async getAll(req, res) {
     try {
-      const eventos = await EventoModel.findAll();
+      const eventos = await eventoModel.findAll();
       res.json(eventos);
     } catch (error) {
       console.error("Erro ao buscar eventos:", error);
@@ -12,12 +12,12 @@ class EventoController {
     }
   }
 
-  // GET /api/animes/:id
-  async getEventoById(req, res) {
+  // GET /eventos/:id
+  async getById(req, res) {
     try {
       const { id } = req.params;
 
-      const evento = await EventoModel.findById(id);
+      const evento = await eventoModel.findById(id);
 
       if (!evento) {
         return res.status(404).json({ error: "Evento não encontrado" });
@@ -30,8 +30,8 @@ class EventoController {
     }
   }
 
-  // POST /api/animes
-  async createEvento(req, res) {
+  // POST /eventos
+  async create(req, res) {
     try {
       // Validação básica
       const {
@@ -44,15 +44,13 @@ class EventoController {
         price,
       } = req.body;
 
-      // Verifica se o título do anime foi fornecido
-
       if (
         !title ||
         !description ||
         !date ||
         !location ||
-        !category ||
         !capacity ||
+        !category ||
         !price
       ) {
         return res
@@ -60,8 +58,8 @@ class EventoController {
           .json({ error: "Todos os campos são obrigatórios" });
       }
 
-      // Criar o novo anime
-      const newEvento = await EventoModel.create(
+      // Criar o novo evento
+      const newEvento = await eventoModel.create(
         title,
         description,
         date,
@@ -82,63 +80,62 @@ class EventoController {
     }
   }
 
-  // PUT /api/animes/:id
-  async updateAnime(req, res) {
+  // PUT /eventos/:id
+   // PUT /eventos/:id
+   async update(req, res) {
     try {
       const { id } = req.params;
       const {
         title,
         description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl,
+        date,
+        location,
+        capacity,
+        category,
+        price,
       } = req.body;
 
-      // Atualizar o anime
-      const updatedAnime = await AnimeModel.update(
+      // Atualizar o evento com os dados fornecidos
+      const updatedEvento = await eventoModel.update(
         id,
         title,
         description,
-        episodes,
-        releaseYear,
-        studio,
-        genres,
-        rating,
-        imageUrl
+        date,
+        location,
+        capacity,
+        category,
+        price
       );
 
-      if (!updatedAnime) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+      if (!updatedEvento) {
+        return res.status(404).json({ error: "Evento não encontrado" });
       }
 
-      res.json(updatedAnime);
+      res.json(updatedEvento);
     } catch (error) {
-      console.error("Erro ao atualizar anime:", error);
-      res.status(500).json({ error: "Erro ao atualizar anime" });
+      console.error("Erro ao atualizar evento:", error);
+      res.status(500).json({ error: "Erro ao atualizar evento" });
     }
   }
 
-  // DELETE /api/animes/:id
-  async deleteAnime(req, res) {
+  // DELETE /eventos/:id
+  async delete(req, res) {
     try {
       const { id } = req.params;
 
-      // Remover o anime
-      const result = await AnimeModel.delete(id);
+      // Remover o evento
+      const result = await eventoModel.delete(id);
 
       if (!result) {
-        return res.status(404).json({ error: "Anime não encontrado" });
+        return res.status(404).json({ error: "Evento não encontrado" });
       }
 
       res.status(204).end(); // Resposta sem conteúdo
     } catch (error) {
-      console.error("Erro ao remover anime:", error);
-      res.status(500).json({ error: "Erro ao remover anime" });
+      console.error("Erro ao remover evento:", error);
+      res.status(500).json({ error: "Erro ao remover evento" });
     }
   }
 }
 
-export default new AnimeController();
+export default new EventoController();

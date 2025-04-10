@@ -1,46 +1,123 @@
 import prisma from "../../prisma/client.js";
 
-class TarefaModel {
-  getAll = async () => {
-    return await prisma.task.findMany();
-  };
-
-  create = async (descricao) => {
-    return await prisma.task.create({
-      data: {
-        descricao,
+class EventoModel {
+  // Obter todos os animes
+  async findAll() {
+    const eventos = await prisma.evento.findMany({
+      orderBy: {
+        createdAt: "desc",
       },
     });
-  };
 
-  update = async (id, concluida, descricao) => {
-    try {
-      const tarefa = await prisma.task.update({
-        where: { id },
-        data: {
-          concluida: concluida !== undefined ? concluida : true,
-          descricao,
-        },
-      });
+    console.log(eventos);
 
-      return tarefa;
-    } catch (error) {
-      console.log("Error", error);
-      throw error;
+    return eventos;
+  }
+
+  // Obter um anime pelo ID
+  async findById(id) {
+    const evento = await prisma.evento.findUnique({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return evento;
+  }
+
+  // Criar um novo anime
+  async create(
+    title,
+        description,
+        date,
+        location,
+        capacity,
+        category,
+        price
+  ) {
+    const newEvento = await prisma.evento.create({
+      data: {
+        title,
+        description,
+        date,
+        location,
+        capacity,
+        category,
+        price
+      },
+    });
+
+    return newEvento;
+  }
+
+  // Atualizar um anime
+  async update(
+    id,
+    title,
+        description,
+        date,
+        location,
+        capacity,
+        category,
+        price
+  ) {
+    const evento = await this.findById(id);
+
+    if (!evento) {
+      return null;
     }
-  };
 
-  delete = async (id) => {
-    try {
-      const tarefaDeletada = await prisma.task.delete({
-        where: { id },
-      });
-
-      return tarefaDeletada;
-    } catch (error) {
-      console.log("Erro ao deletar a tarefa!", error);
-      throw error;
+    // Atualize o evento existente com os novos dados
+    const data = {};
+    if (title !== undefined) {
+      data.title = title;
     }
-  };
+    if (description !== undefined) {
+      data.description = description;
+    }
+    if (date !== undefined) {
+      data.date = episodes;
+    }
+    if (location !== undefined) {
+      data.location = releaseYear;
+    }
+    if (capacity !== undefined) {
+      data.capacity = studio;
+    }
+    if (category !== undefined) {
+      data.category = genres;
+    }
+    if (price !== undefined) {
+      data.price = rating;
+    }
+    
+
+    const eventoUpdated = await prisma.evento.update({
+      where: {
+        id: Number(id),
+      },
+      data,
+    });
+
+    return eventoUpdated;
+  }
+
+  // Remover um anime
+  async delete(id) {
+    const evento = await this.findById(id);
+
+    if (!evento) {
+      return null;
+    }
+
+    await prisma.evento.delete({
+      where: {
+        id: Number(id),
+      },
+    });
+
+    return true;
+  }
 }
-export default new TarefaModel();
+
+export default new EventoModel();

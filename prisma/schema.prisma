@@ -23,7 +23,7 @@ model Task {
   @@map("tasks")
 }
 
-model Eventos {
+model Evento {
   id     Int   @id @default(autoincrement())
   title String
   description String
